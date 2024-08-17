@@ -3,8 +3,6 @@ use crate::consts::InfoPanel;
 use systeminfo::{from_system_os, from_system_hardware};
 use winreg::enums::HKEY_LOCAL_MACHINE;
 use winreg::RegKey;
-use regex::Regex;
-use serde::de::Unexpected::Str;
 use crate::uptime;
 
 impl InfoPanel {
@@ -20,7 +18,7 @@ impl InfoPanel {
         from_system_os().hostname
     }
     fn get_os() -> String {
-        from_system_os().os
+        from_system_os().edition
     }
 
     fn get_host_ipaddress() -> String {
@@ -35,10 +33,11 @@ impl InfoPanel {
         format!("{}:{}:{}", hours, minutes, seconds)
     }
     fn get_resolution() -> String {
-        let video_key = Self::get_reg().open_subkey("SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}\\0000").unwrap();
-        // Читаем значение из реестра
-        let video_mode: String = video_key.get_value("Display1_Details").unwrap();
-        video_mode
+        // let video_key = Self::get_reg().open_subkey("SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}\\0000").unwrap();
+        // // Читаем значение из реестра
+        // let video_mode: String = video_key.get_value("Display1_Details").unwrap();
+        // video_mode
+        "test".to_string()
     }
 
     fn get_cpu() -> String {
@@ -60,14 +59,23 @@ impl InfoPanel {
         Self::get_sysinfo().total_memory()
     }
 
-    fn get_memory_used() -> String {
-        let mut disk_info = Vec::new();
+    fn get_memory_used() -> u64 {
+        let mut disk_info: Vec<u64> = Vec::new();
         let disk = Disks::new_with_refreshed_list();
         for d in &disk {
-            disk_info.push(format!("{}: {}", d.available_space(), d.total_space()));
+            disk_info.push(d.total_space() - d.available_space() );
         }
-        disk_info[0].to_string()
+        disk_info[0]
     }
+    fn get_memory_total() -> u64 {
+        let mut disk_info: Vec<u64> = Vec::new();
+        let disk = Disks::new_with_refreshed_list();
+        for d in &disk {
+            disk_info.push(d.total_space());
+        }
+        disk_info[0]
+    }
+
     pub fn new() -> InfoPanel {
         InfoPanel {
                 name: InfoPanel::get_name(),
@@ -80,11 +88,8 @@ impl InfoPanel {
                 ram_used: InfoPanel::get_ram_used(),
                 ram_total: InfoPanel::get_ram_total(),
                 memory_used: InfoPanel::get_memory_used(),
+                memory_total: InfoPanel::get_memory_total(),
         }
     }
 }
-
-    fn bytes_to_gb(bytes: u64) -> f64 {
-        bytes as f64 / 1024.0 / 1024.0 / 1024.0
-    }
 

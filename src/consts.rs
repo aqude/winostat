@@ -11,5 +11,6 @@ pub struct InfoPanel {
     pub gpu: String,
     pub ram_used: u64,
     pub ram_total: u64,
-    pub memory_used: String,
+    pub memory_used: u64,
+    pub memory_total: u64,
 }
