@@ -3,6 +3,7 @@ mod consts;
 mod methods;
 mod uptime;
 
+use colored::Colorize;
 use crate::consts::InfoPanel;
 
 fn format_bytes(bytes: u64) -> String {
@@ -23,36 +24,47 @@ fn format_bytes(bytes: u64) -> String {
 fn main() {
     let panel = InfoPanel::new();
 
-    println!(r#"
-                            .oodMMMM
-                   .oodMMMMMMMMMMMMM
-       ..oodMMM  MMMMMMMMMMMMMMMMMMM
- oodMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM   {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    ------
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    OS: {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    Host IP Address: {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    Uptime: {}
-                                        Resolution: {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    CPU: {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    GPU: {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    RAM: {} / {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM    Memory: {} / {}
- MMMMMMMMMMMMMM  MMMMMMMMMMMMMMMMMMM
- `^^^^^^MMMMMMM  MMMMMMMMMMMMMMMMMMM
-       ````^^^^  ^^MMMMMMMMMMMMMMMMM
-                      ````^^^^^^MMMM
+    println!(
+        r#"
+{}
+{}
+{}
+{}
 "#,
-        panel.name,
-        panel.os,
-        panel.host_ipaddress,
-        panel.uptime,
-        panel.resolution,
-        panel.cpu,
-        panel.gpu,
-        format_bytes(panel.ram_used),
-        format_bytes(panel.ram_total),
-        format_bytes(panel.memory_used),
-        format_bytes(panel.memory_total),
+        format!(
+            "{}\n{}\n{}{}",
+            "                            .oodMMMM".green(),
+            "                   .oodMMMMMMMMMMMMM".green(),
+            "       ..oodMMM".red(),"  MMMMMMMMMMMMMMMMMMM".green()
+        ),
+        format!(
+            "{}{}\n{}{}{}\n{}{}{}",
+            " oodMMMMMMMMMMM".red(),"  MMMMMMMMMMMMMMMMMMM".green(),
+            " MMMMMMMMMMMMMM".red(),"  MMMMMMMMMMMMMMMMMMM    ".green(), panel.name.bold(),
+            " MMMMMMMMMMMMMM".red(),"  MMMMMMMMMMMMMMMMMMM    ".green(),"----------------------------".bold(),
+        ),
+        format!(
+            "{}{}{}\n{}{}{}\n{}{}{}\n{}{}{}\n{}{}{}\n{}{}{}",
+            " MMMMMMMMMMMMMM".red(),"  MMMMMMMMMMMMMMMMMMM    ".green(),format!("OS: {}", panel.os).bold(),
+            " MMMMMMMMMMMMMM".red(),"  MMMMMMMMMMMMMMMMMMM    ".green(),format!("Host IP Address: {}", panel.host_ipaddress).bold(),
+            " MMMMMMMMMMMMMM".red(),"  MMMMMMMMMMMMMMMMMMM    ".green(),format!("Uptime: {}", panel.uptime).bold(),
+            "               ","                         ",format!("Resolution: {}", panel.resolution).bold(),
+            " MMMMMMMMMMMMMM".cyan(),"  MMMMMMMMMMMMMMMMMMM    ".yellow(),format!("CPU: {}", panel.cpu).bold(),
+            " MMMMMMMMMMMMMM".cyan(),"  MMMMMMMMMMMMMMMMMMM    ".yellow(),format!("GPU: {}", panel.gpu).bold(),
+        ),
+        format!(
+            "{}{}{}\n{}{}{}\n{}{}\n{}{}\n{}{}\n{}{}",
+                " MMMMMMMMMMMMMM".cyan(),"  MMMMMMMMMMMMMMMMMMM".yellow(),format!("    RAM: {} / {}", format_bytes(panel.ram_used), format_bytes(panel.ram_total)).bold(),
+            " MMMMMMMMMMMMMM".cyan(),"  MMMMMMMMMMMMMMMMMMM".yellow(),
+            format!(
+                    "    Memory: {} / {}",
+                format_bytes(panel.memory_used),
+                format_bytes(panel.memory_total)).bold(),
+            " MMMMMMMMMMMMMM".cyan(),"  MMMMMMMMMMMMMMMMMMM".yellow(),
+            " MMMMMMMMMMMMMM".cyan(),"  MMMMMMMMMMMMMMMMMMM".yellow(),
+            " `^^^^^^MMMMMMM".cyan(),"  MMMMMMMMMMMMMMMMMMM".yellow(),
+            "       ````^^^^".cyan(),"  ^^MMMMMMMMMMMMMMMMM\n                      ````^^^^^^MMMM".yellow(),
+        ),
     );
+
 }

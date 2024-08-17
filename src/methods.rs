@@ -1,3 +1,4 @@
+use std::process::{Command, Stdio};
 use sysinfo::{Disks, System};
 use crate::consts::InfoPanel;
 use systeminfo::{from_system_os, from_system_hardware};
@@ -37,7 +38,21 @@ impl InfoPanel {
         // // Читаем значение из реестра
         // let video_mode: String = video_key.get_value("Display1_Details").unwrap();
         // video_mode
-        "test".to_string()
+        // "test".to_string()
+        // TODO Переписать костыль для получения разрешения из реестра =)
+        let output = Command::new("wmic")
+            .arg("path")
+            .arg("Win32_VideoController")
+            .arg("get")
+            .arg("VideoModeDescription")
+            .stdin(Stdio::null())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit())
+            .output()
+            .expect("Failed to execute wmic command");
+
+        let video_mode = String::from_utf8_lossy(&output.stdout);
+        video_mode.lines().nth(1).unwrap().to_string()
     }
 
     fn get_cpu() -> String {

@@ -1,7 +1,10 @@
 [package]
 name = "winostat"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
+authors = ["rusty-aqude"]
+license = "MIT OR Apache-2.0"
+categories = ["command-line-utilities"]
 
 [dependencies]
 serde = { version = "1.0.205", features = ["derive"] }
@@ -12,3 +15,4 @@ winreg = "0.10"
 windows = { version = "0.58.0", features = ["Win32_System_SystemInformation"] }
 sysinfo = "0.31.2"
 regex = "1.10.6"
+colored = "2.1.0"
